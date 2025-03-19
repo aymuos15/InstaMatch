@@ -32,7 +32,7 @@ ___
 
 ### Usage
 
-1. git clone git@github.com:aymuos15/InstaMatch.git
+1. `git clone git@github.com:aymuos15/InstaMatch.git`
 
 2. In your .py or .ipynb file: 
 
