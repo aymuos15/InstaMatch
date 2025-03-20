@@ -6,8 +6,7 @@ Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this libra
 Developed by Soumya Snigdha Kundu, Tom Vercauteren, Aaron Kujawa, Jonathan Shapey, and Marina Ivory.
 ___
 
- ***Our difference: Everything is on the GPU.*** 
-
+ ***Our difference: Everything is on the GPU and we support Multiple classes.***
 ### Instance Sensitive Metrics:
 
 - One-to-One: Panoptic Quality | [Kirillov et al.](https://arxiv.org/abs/1801.00868)
