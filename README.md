@@ -62,7 +62,7 @@ Panoptic Quality Metric on MONAI
 We are always looking for contributions in any form.
 
 ### Guidelines
-Final Guidelines coming soon ..
+Final Guidelines coming soon ...
 
 ## Todo's Theory
 - [ ] Decide the best way to approach empty pred/gt pairs.
@@ -75,7 +75,7 @@ Final Guidelines coming soon ..
   - [ ] Mention properly in the docs/functions whether the gt or both gt and pred go through the connected components function.
 - [ ] 3D Unit tests and corresponding visualisations.
 - [ ] Add variable threshold options.
-- [ ] Make one function which can handle lol. Something like \
+- [ ] Make one function which can handle all. Something like \
 ```instance-sensitive metric(pred, gt, matching_style, base_metric, threshold)```
 - [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
 - [ ] Make a requirements.txt
