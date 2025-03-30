@@ -1,12 +1,12 @@
 # InstaMatch: Multi-Class Instance Sensitive Metrics for Semantic Segmentation. 
 
-Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this library is built for Computing instance-wise segmentation quality metrics for 2D and 3D semantic- and instance segmentation maps.
+Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this library is built for Computing instance-wise segmentation quality metrics for 2D and 3D semantic- and instance segmentation maps.  ***Our difference: Everything is on the GPU.*** 
+
 
 ---
-Developed by Soumya Snigdha Kundu, Tom Vercauteren, Aaron Kujawa, Jonathan Shapey, and Marina Ivory.
+Developed by Soumya Snigdha Kundu, Tom Vercauteren, Aaron Kujawa, Marina Ivory Theodore Barfoot, and Jonathan Shapey.
 ___
 
- ***Our difference: Everything is on the GPU.*** 
 
 ### Instance Sensitive Metrics:
 
@@ -14,7 +14,8 @@ ___
 - Psuedo One-to-One: CC-Metrics | [Jaus et al.](https://arxiv.org/abs/2410.18684)
 - Many-to-One: Lesion-wise Dice | [BraTS-Mets Group](https://github.com/rachitsaluja/BraTS-2023-Metrics)
 - Many-to-Many: Cluster Dice | Kundu et al. (To appear in SPIE Medical Imaging)
-<!-- - Partial-to-One: Blob Dice | [Kofler et al.](https://arxiv.org/abs/2205.08209) -->
+- Many-to-Many: Maximise Mergds Dice | Kundu et al. (Unpublished)
+- Partial-to-One: Blob Dice | [Kofler et al.](https://arxiv.org/abs/2205.08209)
 
 #### Notes:
 
@@ -46,6 +47,35 @@ score = panoptic_dice(pred, gt) # plain 2D/3D prediction and gt torch.tensor.
 
 For details and input dimensions: please open `test.ipynb`
 
+### Similar Works: (Will be completed soon.)
+
+Panoptica
+
+- Limitations
+
+Panoptic Quality Metric on MONAI
+
+- Limitations:
+
 ### Contributions
 
-We are always looking for scripts to stress test all the metrics on various edge cases. Few of which can be found in `test.ipynb` .
+We are always looking for contributions in any form.
+
+### Guidelines
+Final Guidelines coming soon ..
+
+## Todo's Theory
+- [ ] Decide the best way to approach empty pred/gt pairs.
+- [ ] Mention section/line numbers of the paper when mentioned anywhere in the codebase. (Currently only mentioned in unit tests)
+
+
+## Todo's Code
+- [ ] Optimise code
+  - [ ] All base/global metrics should be based on MONAI and optimised to use it. 
+  - [ ] Mention properly in the docs/functions whether the gt or both gt and pred go through the connected components function.
+- [ ] 3D Unit tests and corresponding visualisations.
+- [ ] Add variable threshold options.
+- [ ] Make one function which can handle lol. Something like \
+```instance-sensitive metric(pred, gt, matching_style, base_metric, threshold)```
+- [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
+- [ ] Make a requirements.txt
