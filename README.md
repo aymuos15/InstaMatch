@@ -1,6 +1,6 @@
 # InstaMatch: Multi-Class Instance Sensitive Metrics for Semantic Segmentation. 
 
-Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this library is built for Computing instance-wise segmentation quality metrics for 2D and 3D semantic- and instance segmentation maps.  ***Our difference: Everything is on the GPU.*** 
+Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this library is built for Computing instance-wise segmentation quality metrics for 2D and 3D semantic- and instance segmentation maps.  ***Our difference: Everything is on the GPU.***. We also have adopted all metric for Multi-Class scenarios.
 
 
 ---
