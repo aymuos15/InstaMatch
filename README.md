@@ -29,7 +29,9 @@ ___
 
 `instance-sensitive-metric` -> Indicates a metric which is dependent on the indiviual scores of each components in a volume.
 
-`base metric` -> regular metric like DSC, IoU etc.
+`base metric` -> Regular metrics like DSC, IoU etc.
+
+`global metric` -> Multiclass verisons of base metrics.
 
 ### Usage
 

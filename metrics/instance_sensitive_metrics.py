@@ -462,7 +462,7 @@ class LesionWiseDice(InstanceMetric):
             return torch.tensor(0.0, device=device)
         else:
             return total_lesion_metric_scores / (total_gt_lesions + total_fps)
-
+        
 class MaximisedMergeDice(InstanceMetric):
     """
     Implementation of Optimized Cluster Dice metric.
@@ -486,24 +486,43 @@ class MaximisedMergeDice(InstanceMetric):
         component_labels = torch.unique(labeled_pred)
         component_labels = component_labels[component_labels != 0]
         
-        # Initialize with original values
-        best_dice = self.metric_func(pred_cluster, gt_cluster)
-        best_pred = pred_cluster.clone()
+        # Initialize with empty prediction
+        best_dice = 0.0
+        best_pred = torch.zeros_like(pred_cluster)
         
-        # Test individual components
+        # Get dice score for original full prediction
+        full_dice = self.metric_func(pred_cluster, gt_cluster)
+        if full_dice > best_dice:
+            best_dice = full_dice
+            best_pred = pred_cluster.clone()
+        
+        # Create individual component masks
+        component_masks = []
         for label in component_labels:
-            # Create a mask with only this component
-            temp_pred = torch.zeros_like(pred_cluster)
-            temp_mask = (torch.tensor(labeled_pred == label, device=pred_cluster.device)).float()
-            temp_pred += temp_mask
-            
-            # Calculate Dice score
-            dice = self.metric_func(temp_pred, gt_cluster)
-            
-            # Update if better
-            if dice > best_dice:
-                best_dice = dice
-                best_pred = temp_pred.clone()
+            mask = (labeled_pred == label).float()
+            component_masks.append(mask)
+        
+        # Try all possible combinations of components
+        # Start with 1 component and go up to num_components
+        for k in range(1, len(component_masks) + 1):
+            # Get all combinations of k components
+            from itertools import combinations
+            for combo in combinations(range(len(component_masks)), k):
+                # Create combined mask for this combination
+                temp_pred = torch.zeros_like(pred_cluster)
+                for idx in combo:
+                    temp_pred += component_masks[idx]
+                
+                # Ensure binary mask
+                temp_pred = torch.clamp(temp_pred, 0, 1)
+                
+                # Calculate Dice score
+                dice = self.metric_func(temp_pred, gt_cluster)
+                
+                # Update if better
+                if dice > best_dice:
+                    best_dice = dice
+                    best_pred = temp_pred.clone()
         
         return best_pred, best_dice
     
@@ -563,6 +582,9 @@ class MaximisedMergeDice(InstanceMetric):
                 
                 # Store the optimized Dice score
                 class_metric_scores.append(dice_score)
+            
+            # Ensure binary mask after combining all clusters
+            optimized_class_pred = torch.clamp(optimized_class_pred, 0, 1)
             
             # Store the class-wise mean score and optimized prediction
             all_class_metric_scores[class_id] = torch.mean(torch.stack(class_metric_scores))
