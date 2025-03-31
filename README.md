@@ -81,3 +81,7 @@ Final Guidelines coming soon ...
 ```instance-sensitive metric(pred, gt, matching_style, base_metric, threshold)```
 - [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
 - [ ] Make a requirements.txt
+
+## Todo's immediate
+- Understand the instance way for blob and region dice
+- Do good docs and function names for all

@@ -58,6 +58,22 @@ class PanopticDice(InstanceMetric):
     Inspired from: Kirillov et al., 2019. "Panoptic Segmentation"
     """
     
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components for both prediction and ground truth.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask.
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (pred_label_cc, gt_label_cc, num_pred_features, num_gt_features)
+        """
+        pred_label_cc, num_pred_features = gpu_connected_components(pred_mask)
+        gt_label_cc, num_gt_features = gpu_connected_components(gt_mask)
+        
+        return pred_label_cc, gt_label_cc, num_pred_features, num_gt_features
+    
     def create_match_dict(self, pred_label_cc, gt_label_cc):
         """
         Creates a dictionary of matches between predicted and ground truth components.
@@ -188,8 +204,7 @@ class PanopticDice(InstanceMetric):
             if pred_mask.sum() == 0 and gt_mask.sum() == 0:
                 continue
 
-            pred_label_cc, num_pred_features = gpu_connected_components(pred_mask)
-            gt_label_cc, num_gt_features = gpu_connected_components(gt_mask)
+            pred_label_cc, gt_label_cc, num_pred_features, num_gt_features = self.instance_labelling(pred_mask, gt_mask)
 
             matches = self.create_match_dict(pred_label_cc, gt_label_cc)
             match_data = self.get_all_matches(matches)
@@ -217,6 +232,20 @@ class CCDice(InstanceMetric):
     Implementation of CC-Dice metric.
     Jaus et al., "Every Component Counts: Rethinking the Measure of Success for Medical Semantic Segmentation in Multi-Instance Segmentation Tasks"
     """
+    
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components for ground truth only.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask (not used for labelling).
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (region_map, num_features) where region_map assigns each pixel to a region
+                  and num_features is the number of regions found.
+        """
+        return self.get_gt_regions(gt_mask)
     
     def get_gt_regions(self, gt):
         """
@@ -288,7 +317,7 @@ class CCDice(InstanceMetric):
                 continue
 
             # Get ground truth regions
-            region_map, num_features = self.get_gt_regions(gt_mask)
+            region_map, num_features = self.instance_labelling(pred_mask, gt_mask)
 
             # Initialize a tensor to store metric scores
             metric_scores = torch.zeros(num_features, device=pred.device)
@@ -327,6 +356,27 @@ class ClusterDice(InstanceMetric):
     Kundu et al., 2024. "Cluster Dice: A simple approach for many-to-many instance matching scheme"
     """
     
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components on the overlay of prediction and ground truth.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask.
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (labeled_array, num_features) where labeled_array contains the connected component labels
+                  and num_features is the number of components found.
+        """
+        # Create the overlay
+        overlay = pred_mask + gt_mask
+        overlay[overlay > 0] = 1
+        
+        # Cluster the overlay
+        labeled_array, num_features = gpu_connected_components(overlay)
+        
+        return labeled_array, num_features
+    
     def __call__(self, pred, gt):
         """
         Calculate Cluster Dice score between prediction and ground truth.
@@ -356,12 +406,8 @@ class ClusterDice(InstanceMetric):
                 all_class_metric_scores[class_id] = torch.tensor(0.0, device=pred.device)
                 continue
 
-            # Step 1: Create the overlay
-            overlay = pred_mask + gt_mask
-            overlay[overlay > 0] = 1
-
-            # Step 2: Cluster the overlay
-            labeled_array, num_features = gpu_connected_components(overlay)
+            # Step 1: Cluster the overlay
+            labeled_array, num_features = self.instance_labelling(pred_mask, gt_mask)
 
             # Step 3: Calculate metric scores for each cluster
             class_metric_scores = []
@@ -393,6 +439,22 @@ class LesionWiseDice(InstanceMetric):
     Optimized version based on BraTS-Mets 2023/24 Challenge metrics.
     """
     
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components for both prediction and ground truth.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask.
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (pred_label_cc, gt_label_cc, num_pred_features, num_gt_features)
+        """
+        pred_label_cc, num_pred_features = gpu_connected_components(pred_mask)
+        gt_label_cc, num_gt_features = gpu_connected_components(gt_mask)
+        
+        return pred_label_cc, gt_label_cc, num_pred_features, num_gt_features
+    
     def __call__(self, pred, gt):
         """
         Calculate Lesion-wise Dice score between prediction and ground truth.
@@ -419,8 +481,7 @@ class LesionWiseDice(InstanceMetric):
                 continue
                 
             # Process connected components for this class
-            pred_label_cc, _ = gpu_connected_components(pred_mask)
-            gt_label_cc, _ = gpu_connected_components(gt_mask)
+            pred_label_cc, gt_label_cc, _, _ = self.instance_labelling(pred_mask, gt_mask)
 
             num_class_gt_lesions = torch.unique(gt_label_cc[gt_label_cc != 0]).size(0)
             total_gt_lesions += num_class_gt_lesions
@@ -468,6 +529,28 @@ class MaximisedMergeDice(InstanceMetric):
     Implementation of Optimized Cluster Dice metric.
     Extends Cluster Dice by Kundu et al., 2024 with component optimization.
     """
+    
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components on the overlay of prediction and ground truth,
+        similar to ClusterDice, but with additional optimization for prediction components.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask.
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (labeled_array, num_features) where labeled_array contains the connected component labels
+                  and num_features is the number of components found.
+        """
+        # Create the overlay
+        overlay = pred_mask + gt_mask
+        overlay[overlay > 0] = 1
+        
+        # Cluster the overlay
+        labeled_array, num_features = gpu_connected_components(overlay)
+        
+        return labeled_array, num_features
     
     def _optimize_dice_for_cluster(self, pred_cluster, gt_cluster):
         """Find optimal connected components in pred_cluster to maximize Dice score with gt_cluster"""
@@ -562,7 +645,7 @@ class MaximisedMergeDice(InstanceMetric):
             overlay[overlay > 0] = 1
 
             # Step 2: Cluster the overlay
-            labeled_array, num_features = gpu_connected_components(overlay)
+            labeled_array, num_features = self.instance_labelling(pred_mask, gt_mask)
 
             # Step 3: Calculate metric scores for each cluster with optimization
             class_metric_scores = []
@@ -612,6 +695,22 @@ class BlobDice(InstanceMetric):
     The final score is the mean of all blob-wise scores.
     """
     
+    def instance_labelling(self, pred_mask, gt_mask):
+        """
+        Perform instance labelling using connected components for ground truth only.
+        
+        Args:
+            pred_mask (torch.Tensor): Binary prediction mask (not used for labelling).
+            gt_mask (torch.Tensor): Binary ground truth mask.
+            
+        Returns:
+            tuple: (gt_label_cc, num_gt_features) where gt_label_cc contains the connected component labels
+                  and num_gt_features is the number of components found.
+        """
+        gt_label_cc, num_gt_features = gpu_connected_components(gt_mask)
+        
+        return gt_label_cc, num_gt_features
+    
     def __call__(self, pred, gt):
         """
         Calculate Blob Dice score between prediction and ground truth.
@@ -642,7 +741,7 @@ class BlobDice(InstanceMetric):
                 continue
             
             # Get connected components for ground truth
-            gt_label_cc, _ = gpu_connected_components(gt_mask)
+            gt_label_cc, _ = self.instance_labelling(pred_mask, gt_mask)
             
             # Get unique blob labels (excluding background/0)
             unique_labels = torch.unique(gt_label_cc)
