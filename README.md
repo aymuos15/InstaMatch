@@ -10,12 +10,15 @@ ___
 
 ### Instance Sensitive Metrics:
 
-- One-to-One: Panoptic Quality | [Kirillov et al.](https://arxiv.org/abs/1801.00868)
+This is our personal nomenclature and naming to simplify stuff. We denote who initially proposed the actual logic in the links.
+
+- One-to-One: Panoptic Metrics | [Kirillov et al.](https://arxiv.org/abs/1801.00868)
 - Psuedo One-to-One: CC-Metrics | [Jaus et al.](https://arxiv.org/abs/2410.18684)
-- Many-to-One: Lesion-wise Dice | [BraTS-Mets Group](https://github.com/rachitsaluja/BraTS-2023-Metrics)
-- Many-to-Many: Cluster Dice | Kundu et al. (To appear in SPIE Medical Imaging)
-- Many-to-Many: Maximise Mergds Dice | Kundu et al. (Unpublished)
-- Partial-to-One: Blob Dice | [Kofler et al.](https://arxiv.org/abs/2205.08209)
+- Many-to-One: Lesion-wise Metrics | [BraTS-Mets Group](https://github.com/rachitsaluja/BraTS-2023-Metrics)
+- Many-to-One: Maximise Merge Metrics | [Kofler et al.](https://arxiv.org/abs/2312.02608)
+- Many-to-Many: Cluster Metrics | [Kundu et al.](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/13407/1340711/Cluster-dice--a-simple-and-fast-approach-for-instance/10.1117/12.3047296.short)
+- Many-to-Many: Multi Maximise Merge Metrics | Kundu et al. (Unpublished)
+- Partial-to-One: Blob Metrics | [Kofler et al.](https://arxiv.org/abs/2205.08209)
 
 #### Notes:
 
@@ -25,13 +28,15 @@ ___
    - Intersection over Union
    - Normalised Surface Distance. 
 
+  We follow the normal pytorch convention of C, H, W, D. Based on user request, we can amend the library to work with B, C, H, W, D as well, like MONAI.
+
 #### Terminology:
 
-`instance-sensitive-metric` -> Indicates a metric which is dependent on the indiviual scores of each components in a volume.
+`instance/instance-sensitive-metric` -> Indicates a metric which is dependent on the indiviual scores of each components in a volume.
 
-`base metric` -> Regular metrics like DSC, IoU etc.
+`semantic metric` -> Multiclass verisons of base metrics.
 
-`global metric` -> Multiclass verisons of base metrics.
+`base metric` -> Adapted semantic metrics to work with instance metrics easily.
 
 ### Usage
 
@@ -47,7 +52,7 @@ score = panoptic_dice(pred, gt) # plain 2D/3D prediction and gt torch.tensor.
 
 (or) You could simply copy and paste :P
 
-For details and input dimensions: please open `test.ipynb`
+For details and input dimensions: please open `unittest.ipynb`
 
 ### Similar Works: (Will be completed soon.)
 

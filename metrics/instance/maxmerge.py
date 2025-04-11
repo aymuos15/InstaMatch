@@ -106,7 +106,7 @@ def optimal_matching(match_data):
     return optimal_matches
 
 
-def optimized_pq_metric(pred_cc, gt_cc, metric='dsc'):
+def mm_metric(pred_cc, gt_cc, metric='dsc'):
     num_classes = pred_cc.shape[0]
     
     total_metric_score = 0.0
