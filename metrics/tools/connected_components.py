@@ -1,12 +1,8 @@
 import torch
-
 import cupy as cp
 import cucim.skimage.measure as cucim_measure
 
-############################
-# GPU CONNECTED COMPONENTS #
-############################
-
+# Connected Components
 def gpu_connected_components(img, connectivity=None):
     """
     PyTorch wrapper for calculating connected components on a GPU using cupy and cucim.skimage.
@@ -14,14 +10,12 @@ def gpu_connected_components(img, connectivity=None):
     
     Args:
         img (torch.Tensor): Input image.
-        connectivity (int, optional): Connectivity defining the neighborhood. Default is None.
     
     Input:
-        img (torch.Tensor): Binary image of shape (H, W) or (N, H, W).
         connectivity (int, optional): Connectivity defining the neighborhood. Default is None.
     
     Output:
-        torch.Tensor: Labeled image with each connected component having a unique label, of shape (H, W) or (N, H, W).
+        torch.Tensor: Labeled image with each connected component having a unique label, of shape (H, W).
         int: Number of connected components found.
     """
     img_cupy = cp.asarray(img)

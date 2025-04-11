@@ -77,11 +77,13 @@ Final Guidelines coming soon ...
   - [ ] Mention properly in the docs/functions whether the gt or both gt and pred go through the connected components function.
 - [ ] 3D Unit tests and corresponding visualisations.
 - [ ] Add variable threshold options.
-- [ ] Make one function which can handle all. Something like \
-```instance-sensitive metric(pred, gt, matching_style, base_metric, threshold)```
 - [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
 - [ ] Make a requirements.txt
+- [ ] All base and semantic metrics should be from MONAI
 
 ## Todo's immediate
-- Understand the instance way for blob and region dice
-- Do good docs and function names for all
+- [ ] Understand the instance way for blob and region dice
+- [ ] Do good docs and function names for all
+- [ ] Make sure Normalised Surface Dice is properly implemented within Region Metrics
+- [ ] Pass num classes as an arg.
+- [ ] Properly/Elegantly handle cases where there is no prediction or ground truth. Throws errors at the moment.
