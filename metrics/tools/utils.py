@@ -1,6 +1,6 @@
-from ..base.dice_score_coefficient import dsc
-from ..base.intersection_over_union import iou
-from ..base.normalised_surface_dice import nsd
+from metrics.base.dice_score_coefficient import dsc
+from metrics.base.intersection_over_union import iou
+from metrics.base.normalised_surface_dice import nsd
 
 METRIC_FUNCS = {
     'dsc': dsc,

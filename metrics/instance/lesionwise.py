@@ -1,7 +1,7 @@
 import torch
 
-from metrics.instance.helper import METRIC_FUNCS
-from metrics.instance.helper import _handle_empty_classes
+from metrics.tools.utils import METRIC_FUNCS
+from metrics.tools.utils import _handle_empty_classes
 
 def lw_metric(pred_cc, gt_cc, num_gt_instances, metric='dsc'):
     num_classes = pred_cc.shape[0]

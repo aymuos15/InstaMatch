@@ -1,8 +1,8 @@
 import torch
 from scipy.optimize import linear_sum_assignment
 
-from metrics.instance.helper import METRIC_FUNCS
-from metrics.instance.helper import _handle_empty_classes
+from metrics.tools.utils import METRIC_FUNCS
+from metrics.tools.utils import _handle_empty_classes
 
 #! I think this can be improved in some way?
 def create_match_dict(pred_label_cc, gt_label_cc, metric=None):

@@ -2,8 +2,8 @@ import torch
 from scipy.ndimage import distance_transform_edt
 
 from metrics.tools.connected_components import gpu_connected_components
-from metrics.instance.helper import METRIC_FUNCS
-from metrics.instance.helper import _handle_empty_classes, _calculate_final_score
+from metrics.tools.utils import METRIC_FUNCS
+from metrics.tools.utils import _handle_empty_classes, _calculate_final_score
 
 def cc_metric(pred, gt, metric='dsc'):
     num_classes = pred.shape[0]
@@ -16,27 +16,35 @@ def cc_metric(pred, gt, metric='dsc'):
             continue
 
         cls_region_map, num_cls_features = get_gt_regions(gt[cls], pred.device)
-        cls_metric_score = torch.zeros(num_cls_features, device=pred.device)
+        cls_metric_scores = []  # Collect scores for all regions in this class
         for cls_region_label in range(1, num_cls_features + 1):
             cls_mask = (cls_region_map == cls_region_label)
             pred_region = pred[cls][cls_mask]
             gt_region = gt[cls][cls_mask]
+
+            # Clip values from 0 to 1
+            pred_region = torch.clamp(pred_region, 0, 1)
+            gt_region = torch.clamp(gt_region, 0, 1)
 
             # For NSD, ensure the inputs are appropriately formatted
             if metric == 'nsd':
                 pred_full = torch.zeros_like(cls_mask, dtype=torch.float32)
                 gt_full = torch.zeros_like(cls_mask, dtype=torch.float32)
 
-                # Place the region values back in their original positions - ensure same dtype
-                pred_full[cls_mask] = pred_region.float()  # Convert to float32
-                gt_full[cls_mask] = gt_region.float()      # Convert to float32
+                # Place the region values back in their original positions
+                pred_full[cls_mask] = pred_region.float()
+                gt_full[cls_mask] = gt_region.float()
 
-                cls_metric_score[cls_region_label - 1] = METRIC_FUNCS[metric](pred_full, gt_full)
+                cls_metric_score = METRIC_FUNCS[metric](pred_full, gt_full)
             else:
-                # Convert tensors to the same type for other metrics as well
-                cls_metric_score[cls_region_label - 1] = METRIC_FUNCS[metric](pred_region.float(), gt_region.float())
+                cls_metric_score = METRIC_FUNCS[metric](pred_region.float(), gt_region.float())
 
-        total_metric_score += torch.mean(cls_metric_score)
+            cls_metric_scores.append(cls_metric_score)
+
+        # Calculate the mean score for the class and add to total
+        if cls_metric_scores:
+            mean_cls_score = torch.mean(torch.tensor(cls_metric_scores, device=pred.device))
+            total_metric_score += mean_cls_score
 
     return _calculate_final_score(total_metric_score, num_classes).item()
 

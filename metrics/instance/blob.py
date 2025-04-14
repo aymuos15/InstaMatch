@@ -1,7 +1,7 @@
 import torch
 
-from metrics.instance.helper import METRIC_FUNCS
-from metrics.instance.helper import _handle_empty_classes, _calculate_final_score
+from metrics.tools.utils import METRIC_FUNCS
+from metrics.tools.utils import _handle_empty_classes, _calculate_final_score
 
 def blob_metric(pred, gt, metric='dsc'):
     num_classes = pred.shape[0]
