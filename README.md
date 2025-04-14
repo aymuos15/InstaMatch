@@ -92,3 +92,4 @@ Final Guidelines coming soon ...
 - [ ] Make sure Normalised Surface Dice is properly implemented within Region Metrics
 - [ ] Pass num classes as an arg.
 - [ ] Properly/Elegantly handle cases where there is no prediction or ground truth. Throws errors at the moment.
+- [ ] Need to see if partpq implementation can be optimised.
