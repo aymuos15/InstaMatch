@@ -1,12 +1,6 @@
-# InstaMatch: Multi-Class Instance Sensitive Metrics for Semantic Segmentation. 
+# InstaMatch: Multi-Class Metrics for Instance-Sensitive Segmentation. 
 
-Like [panoptica](https://github.com/BrainLesion/panoptica/tree/main), this library is built for Computing instance-wise segmentation quality metrics for 2D and 3D semantic- and instance segmentation maps.  ***Our difference: Everything is on the GPU.*** We also have adopted all metrics for Multi-Class scenarios.
-
-
----
-Developed by Soumya Snigdha Kundu, Tom Vercauteren, Aaron Kujawa, Marina Ivory Theodore Barfoot, and Jonathan Shapey.
-___
-
+This is a library to compute metrics for semantic, instance, panoptic and partaware segmentation. All on the GPU and multiple classes. The focus is on `instance sensitive` segmentation, where the metrics/results are dependent on the indiviual evaluation of each instance in a prediction or ground truth.
 
 ### Instance Sensitive Metrics:
 
@@ -22,8 +16,9 @@ This is our personal nomenclature and naming to simplify stuff. We denote who in
 
 #### Notes:
 
-1. All are built for multiple classes out of the box.
-2. For all `instance-sensitive-metrics`, the `base metrics` can be swapped out with a simple arg switch. Current Support:
+1. This library is predominantly posed to work with semantic segmentation outputs. However, it can be also be used for end to end instance, panoptic and part aware segmentation as well. Guidelines are in the making.
+2. All metrics are built for multiple classes out of the box.
+3. For all `instance` and `part` metrics, the `base metrics` can be swapped out with a simple arg switch. Current Support:
    - Dice Score Coefficient.
    - Intersection over Union
    - Normalised Surface Distance. 
@@ -32,11 +27,13 @@ This is our personal nomenclature and naming to simplify stuff. We denote who in
 
 #### Terminology:
 
-`instance/instance-sensitive-metric` -> Indicates a metric which is dependent on the indiviual scores of each components in a volume.
+`instance` -> Panoptic Quality style metrics which are more akin to panoptic or instance segmentation.
 
-`semantic metric` -> Multiclass verisons of base metrics.
+`semantic` -> Multiclass verisons of base metrics.
 
-`base metric` -> Adapted semantic metrics to work with instance metrics easily.
+`part` -> Part aware segmentation metrics.
+
+`base` -> Adapted semantic metrics to work with instance metrics easily.
 
 ### Usage
 
@@ -52,7 +49,7 @@ score = panoptic_dice(pred, gt) # plain 2D/3D prediction and gt torch.tensor.
 
 (or) You could simply copy and paste :P
 
-For details and input dimensions: please open `unittest.ipynb`
+For details and input dimensions: please open testing notebooks.
 
 ### Similar Works: (Will be completed soon.)
 
@@ -75,7 +72,6 @@ Final Guidelines coming soon ...
 - [ ] Decide the best way to approach empty pred/gt pairs.
 - [ ] Mention section/line numbers of the paper when mentioned anywhere in the codebase. (Currently only mentioned in unit tests)
 
-
 ## Todo's Code
 - [ ] Optimise code
   - [ ] All base/global metrics should be based on MONAI and optimised to use it. 
@@ -84,14 +80,12 @@ Final Guidelines coming soon ...
 - [ ] Add variable threshold options.
 - [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
 - [ ] Make a requirements.txt
-- [ ] All base and semantic metrics should be from MONAI
-
-## Todo's immediate
-- [ ] Understand the instance way for blob and region dice
-- [ ] Do good docs and function names for all
-- [ ] Make sure Normalised Surface Dice is properly implemented within Region Metrics
 - [ ] Pass num classes as an arg.
+- [ ] All semantic metrics should be from MONAI.
+
+## Part Metrics Todo's immediate
+- [ ] Elabortate Documentation.
 - [ ] Properly/Elegantly handle cases where there is no prediction or ground truth. Throws errors at the moment.
-- [ ] Need to see if partpq implementation can be optimised.
-- [ ] The plotting code in part aware should not rely on the ordering of the classes defined.
-- [ ] Need to set a threshold for PartPQ (This will go in `create_match_dict`)
+- [ ] Further optimisation.
+- [ ] The plotting code in unit tests should not rely on the ordering of the classes defined.
+- [ ] Need to set a threshold for PartPQ (This will go in `create_match_dict`).
