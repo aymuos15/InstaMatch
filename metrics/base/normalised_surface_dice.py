@@ -1,23 +1,23 @@
 from monai.metrics import compute_surface_dice
 
-def nsd(pred, gt):
+def nsd(im1, im2):
     """
-    Calculates the Normalized Surface Dice (NSD) between prediction and ground truth masks.
+    Calculates the Normalized Surface Dice (NSD) between two binary images.
     
-    The function first adds batch and channel dimensions to the input tensors as required by MONAI,
-    then computes the surface Dice score with a tolerance of 1.0.
+    Input:
+        im1 (torch.Tensor): Binary image | (H, W) or (H, W, D).
+        im2 (torch.Tensor): Binary image | (H, W) or (H, W, D).
     
-    Args:
-        pred (torch.Tensor): Predicted binary segmentation mask
-        gt (torch.Tensor): Ground truth binary segmentation mask
-        
     Returns:
-        float: The Normalized Surface Dice score. Returns 0 if the computation results in NaN.
+        torch.Tensor: NSD score between 0 and 1.
+
+    Note:
+        This is a wrapper around MONAI's compute_surface_dice function.
     """
 
     # Add batch and channel dimensions to both tensors as required by MONAI
-    pred = pred.unsqueeze(0).unsqueeze(0)
-    gt = gt.unsqueeze(0).unsqueeze(0)
+    pred = im1.unsqueeze(0).unsqueeze(0)
+    gt = im2.unsqueeze(0).unsqueeze(0)
 
     distance = compute_surface_dice(pred, gt, [1.0])
 

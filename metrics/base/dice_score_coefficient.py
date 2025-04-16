@@ -2,18 +2,14 @@ import torch
 
 def dsc(im1, im2):
     """
-    Calculates the Dice coefficient between two binary images.
-    
-    Args:
-        im1 (torch.Tensor): First binary image.
-        im2 (torch.Tensor): Second binary image.
+    Calculates the Dice Score Coefficient (DSC) between two binary images.
     
     Input:
-        im1 (torch.Tensor): Binary image of shape (H, W) or (N, H, W).
-        im2 (torch.Tensor): Binary image of shape (H, W) or (N, H, W).
+        im1 (torch.Tensor): Binary image | (H, W) or (H, W, D).
+        im2 (torch.Tensor): Binary image | (H, W) or (H, W, D).
     
-    Output:
-        torch.Tensor: Dice coefficient score between 0 and 1.
+    Returns:
+        torch.Tensor: DSC between 0 and 1.
     """
     intersection = torch.sum(im1 * im2)
     sum_im1 = torch.sum(im1)
