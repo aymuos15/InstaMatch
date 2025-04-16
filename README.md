@@ -93,3 +93,5 @@ Final Guidelines coming soon ...
 - [ ] Pass num classes as an arg.
 - [ ] Properly/Elegantly handle cases where there is no prediction or ground truth. Throws errors at the moment.
 - [ ] Need to see if partpq implementation can be optimised.
+- [ ] The plotting code in part aware should not rely on the ordering of the classes defined.
+- [ ] Need to set a threshold for PartPQ (This will go in `create_match_dict`)
