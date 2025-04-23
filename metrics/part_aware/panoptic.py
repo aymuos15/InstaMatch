@@ -1,19 +1,9 @@
 import torch
 from scipy.optimize import linear_sum_assignment
 
+from metrics.tools.mask_dilation import dilate_mask
 from metrics.tools.utils import METRIC_FUNCS
 from metrics.tools.utils import _handle_empty_classes
-
-# Helper function to dilate a mask by 1 pixel
-def dilate_mask(mask):
-    import torch.nn.functional as F
-    # Convert to float for conv operation
-    mask_f = mask.float().unsqueeze(0).unsqueeze(0)
-    # Define a 3x3 kernel for dilation
-    kernel = torch.ones((1, 1, 3, 3), device=mask.device)
-    # Apply convolution and threshold to get dilated mask
-    dilated = F.conv2d(mask_f, kernel, padding=1) > 0
-    return dilated.squeeze(0).squeeze(0)
 
 def create_match_dict(pred_one_hot_cc, gt_one_hot_cc, metric=None, thing_cls_list=None, part_cls_list=None):
     """
@@ -322,9 +312,10 @@ def thing_cls_scores(optimal_matches, thing_cls_list=None, matching_dict=None):
             match_qualities.append(match_quality)
         
         # Calculate mean across all matches
-        mean_quality = sum(match_qualities) / len(match_qualities) if match_qualities else 0
+        # mean_quality = sum(match_qualities) / len(match_qualities) if match_qualities else 0
+        total_score = sum(match_qualities)
         
-        return mean_quality, match_qualities
+        return total_score, match_qualities
     
     # If we're calculating scores across all classes
     else:
@@ -351,9 +342,9 @@ def thing_cls_scores(optimal_matches, thing_cls_list=None, matching_dict=None):
                     cls_wise_scores[class_idx] = 0.0
         
         # Calculate mean score across all classes
-        mean_score = total_score / valid_classes if valid_classes > 0 else 0.0
+        # mean_score = total_score / valid_classes if valid_classes > 0 else 0.0
         
-        return mean_score, cls_wise_scores
+        return total_score, cls_wise_scores
 
 def stuff_cls_scores(pred_one_hot_cc, gt_one_hot_cc, metric='dsc', stuff_cls_list=None):
     """
@@ -454,7 +445,7 @@ def PartPQ(pred_one_hot_cc, gt_one_hot_cc, metric='dsc', stuff_cls_list=None, th
     # Numerator: sum of thing and stuff quality scores
     # Denominator: total count of true positives, false positives, and false negatives
     numerator = thing_cls_score + stuff_cls_score
-    denominator = total_tp + total_fp + total_fn
+    denominator = total_tp + total_fp + total_fn + len(stuff_cls_list)
 
     # Avoid division by zero
     partpq_score = numerator / denominator if denominator > 0 else 0.0

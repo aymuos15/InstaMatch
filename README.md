@@ -1,6 +1,6 @@
 # InstaMatch: Multi-Class Metrics for Instance-Sensitive Segmentation. 
 
-This is a library to compute metrics for semantic, instance, panoptic and partaware segmentation. All on the GPU and multiple classes. The focus is on `instance sensitive` segmentation, where the metrics/results are dependent on the indiviual evaluation of each instance in a prediction or ground truth.
+This is a library to compute metrics for 2D/3D semantic, instance, panoptic and partaware segmentation. All on the GPU and multiple classes. The focus is on `instance sensitive` segmentation, where the metrics/results are dependent on the indiviual evaluation of each instance in a prediction or ground truth.
 
 ### Instance Sensitive Metrics:
 
@@ -35,21 +35,9 @@ This is our personal nomenclature and naming to simplify stuff. We denote who in
 
 `base` -> Adapted semantic metrics to work with instance metrics easily.
 
-### Usage
+### Usage (Will be completed soon.)
 
-1. `git clone git@github.com:aymuos15/InstaMatch.git`
-
-2. In your .py or .ipynb file: 
-
-```python
-from InstaMatch.instance_sensitive_metrics import panoptic_dice # Or any of the other 3.
-
-score = panoptic_dice(pred, gt) # plain 2D/3D prediction and gt torch.tensor.
-```
-
-(or) You could simply copy and paste :P
-
-For details and input dimensions: please open testing notebooks.
+An easy way to use it now is to just clone the repo.
 
 ### Similar Works: (Will be completed soon.)
 
@@ -61,12 +49,17 @@ Panoptic Quality Metric on MONAI
 
 - Limitations:
 
+PanopticAPI
+
+- Limitations:
+
 ### Contributions
 
-We are always looking for contributions in any form.
+We are always looking for contributions in any form. Immediately, we are looking to build exhaustive unit tests.
 
-### Guidelines
-Final Guidelines coming soon ...
+### Guidelines (Will be completed soon.)
+
+...
 
 ## Todo's Theory
 - [ ] Decide the best way to approach empty pred/gt pairs.
@@ -88,4 +81,5 @@ Final Guidelines coming soon ...
 - [ ] Properly/Elegantly handle cases where there is no prediction or ground truth. Throws errors at the moment.
 - [ ] Further optimisation.
 - [ ] The plotting code in unit tests should not rely on the ordering of the classes defined.
-- [ ] Need to set a threshold for PartPQ (This will go in `create_match_dict`).
+- [ ] Need to set a threshold for PartPQ/PartRegion (This will go in `create_match_dict`).
+- [ ] Deciding the best way to handle unit tests.
