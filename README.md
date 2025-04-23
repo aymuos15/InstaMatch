@@ -37,7 +37,11 @@ This is our personal nomenclature and naming to simplify stuff. We denote who in
 
 ### Usage (Will be completed soon.)
 
-An easy way to use it now is to just clone the repo.
+1. Clone the repo and `cd` into it.
+2. `conda env create -f environment.yml`
+3. `conda activate instamatch`
+
+Unfortunately, I could not get a `pip` version working. Working on that (Help required as well :))
 
 ### Similar Works: (Will be completed soon.)
 
@@ -66,15 +70,13 @@ We are always looking for contributions in any form. Immediately, we are looking
 - [ ] Mention section/line numbers of the paper when mentioned anywhere in the codebase. (Currently only mentioned in unit tests)
 
 ## Todo's Code
-- [ ] Optimise code
-  - [ ] All base/global metrics should be based on MONAI and optimised to use it. 
-  - [ ] Mention properly in the docs/functions whether the gt or both gt and pred go through the connected components function.
-- [ ] 3D Unit tests and corresponding visualisations.
+- [ ] All semantic metrics should be from MONAI. (Or is this actually the best route?)
+- [ ] Optimise code (If possible)
+- [ ] 3D Unit tests.
+  - [ ] Minor testing shows it works.
 - [ ] Add variable threshold options.
-- [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
-- [ ] Make a requirements.txt
 - [ ] Pass num classes as an arg.
-- [ ] All semantic metrics should be from MONAI.
+- [ ] [LOT OF WORK BUT IMPORTANT] - Make visualisations of the matching for all of the metrics.
 
 ## Part Metrics Todo's immediate
 - [ ] Elabortate Documentation.

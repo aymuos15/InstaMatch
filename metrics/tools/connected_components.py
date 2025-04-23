@@ -1,6 +1,6 @@
 import torch
 import cupy as cp
-import cucim.skimage.measure as cucim_measure
+from cucim.skimage import measure as cucim_measure
 
 # Connected Components
 def gpu_connected_components(img, connectivity=None):

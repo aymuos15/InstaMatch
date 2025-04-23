@@ -1,0 +1,10 @@
+name: instamatch
+channels:
+  - rapidsai
+  - nvidia
+  - conda-forge
+dependencies:
+  - cucim
+  - monai
+  - ipykernel
+  - seaborn
